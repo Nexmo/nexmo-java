@@ -21,6 +21,7 @@
  */
 package com.nexmo.client.application;
 
+import com.nexmo.client.AbstractMethod;
 import com.nexmo.client.HttpWrapper;
 import com.nexmo.client.NexmoBadRequestException;
 import com.nexmo.client.NexmoClientException;
@@ -34,7 +35,7 @@ import org.apache.http.util.EntityUtils;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
-class UpdateApplicationMethod extends ApplicationMethod<Application, Application> {
+class UpdateApplicationMethod extends AbstractMethod<Application, Application> {
     private static final Class[] ALLOWED_AUTH_METHODS = new Class[]{TokenAuthMethod.class};
 
     private static final String PATH = "/applications/%s";
@@ -63,5 +64,10 @@ class UpdateApplicationMethod extends ApplicationMethod<Application, Application
         }
 
         return Application.fromJson(new BasicResponseHandler().handleResponse(response));
+    }
+
+    @Override
+    protected RequestBuilder applyAuth(RequestBuilder request) throws NexmoClientException {
+        return getAuthMethod(getAcceptableAuthMethods()).applyAsBasicAuth(request);
     }
 }
