@@ -75,4 +75,9 @@ class ListApplicationsMethod extends AbstractMethod<ListApplicationRequest, Appl
 
         return ApplicationList.fromJson(new BasicResponseHandler().handleResponse(response));
     }
+
+    @Override
+    protected RequestBuilder applyAuth(RequestBuilder request) throws NexmoClientException {
+        return getAuthMethod(getAcceptableAuthMethods()).applyAsBasicAuth(request);
+    }
 }

@@ -21,46 +21,24 @@
  */
 package com.nexmo.client.application;
 
-import com.nexmo.client.HttpConfig;
 import com.nexmo.client.HttpWrapper;
+import com.nexmo.client.auth.TokenAuthMethod;
 import org.apache.http.client.methods.RequestBuilder;
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class CreateApplicationMethodTest extends AppBasicAuthTest {
-    private CreateApplicationMethod method;
-
-    @Before
-    public void setUp() {
-        method = new CreateApplicationMethod(new HttpWrapper());
-    }
+public class AppBasicAuthTest {
 
     @Test
-    public void testMakeRequest() throws Exception {
-        RequestBuilder builder = method.makeRequest(Application.builder().build());
-
-        assertEquals("POST", builder.getMethod());
-        assertEquals("application/json", builder.getFirstHeader("Content-Type").getValue());
-    }
-
-    @Test
-    public void testDefaultUri() throws Exception {
-        RequestBuilder builder = method.makeRequest(Application.builder().build());
-
-        assertEquals("POST", builder.getMethod());
-        assertEquals("https://api.nexmo.com/v2/applications", builder.build().getURI().toString());
-    }
-
-    @Test
-    public void testCustomUri() throws Exception {
-        HttpWrapper wrapper = new HttpWrapper(HttpConfig.builder().baseUri("https://example.com").build());
+    public void testApplyAuth() throws Exception {
+        String expectedAuthStr = "Authorization: Basic NHQ4YWVhZ2I6WHlNczJKa21BMVp6OWRVaw==";
+        HttpWrapper wrapper = new HttpWrapper(new TokenAuthMethod("4t8aeagb", "XyMs2JkmA1Zz9dUk"));
         CreateApplicationMethod method = new CreateApplicationMethod(wrapper);
+        RequestBuilder request = method.makeRequest(Application.builder().build());
+        RequestBuilder requestWithAuth = method.applyAuth(request);
 
-        RequestBuilder builder = method.makeRequest(Application.builder().build());
+        assertEquals(expectedAuthStr, String.valueOf(requestWithAuth.getHeaders("Authorization")[0]));
 
-        assertEquals("POST", builder.getMethod());
-        assertEquals("https://example.com/v2/applications", builder.build().getURI().toString());
     }
 }

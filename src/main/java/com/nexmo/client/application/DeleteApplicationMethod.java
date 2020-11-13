@@ -62,4 +62,9 @@ class DeleteApplicationMethod extends AbstractMethod<String, Void> {
 
         return null;
     }
+
+    @Override
+    protected RequestBuilder applyAuth(RequestBuilder request) throws NexmoClientException {
+        return getAuthMethod(getAcceptableAuthMethods()).applyAsBasicAuth(request);
+    }
 }
